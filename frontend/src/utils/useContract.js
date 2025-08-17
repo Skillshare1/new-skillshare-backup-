@@ -1,7 +1,7 @@
 // src/utils/useContract.js
 import { ethers } from "ethers";
 
-// ✅ Correct ABI import (update the relative path if your folder structure differs)
+// ✅ Correct ABI import for SkillSnap contract (for task creation)
 import artifact from "../../../smart-contracts/artifacts/contracts/SkillSnap.sol/SkillSnap.json";
 
 // ✅ Address from .env (set VITE_CONTRACT_ADDRESS after deployment)

@@ -31,6 +31,12 @@ export async function addTask(task) {
   return data;
 }
 
+/** Delete a task (used if on-chain funding fails at posting) */
+export async function deleteTask(taskId) {
+  const { error } = await supabase.from("tasks").delete().eq("id", taskId);
+  if (error) throw error;
+}
+
 /** Browse list: hide finished tasks. */
 export async function getTasks() {
   const { data, error } = await supabase
@@ -38,7 +44,9 @@ export async function getTasks() {
     .select(`
       id, title, description, reward, location, category, deadline, contact,
       latitude, longitude, image_url, poster_wallet, poster_email, worker_wallet,
-      status, tx_hash, created_at
+      status, tx_hash, created_at,
+      submission_url, submission_notes, submission_file_url, submitted_at,
+      review_notes, approved_at, payout_tx_hash
     `)
     .neq("status", "completed")
     .neq("status", "paid")
@@ -48,31 +56,39 @@ export async function getTasks() {
   return data || [];
 }
 
-/** Accept an OPEN task — race-safe and clear if nothing matched. */
+/** Assign a worker and move task to 'accepted'. (poster cannot accept own task) */
 export async function acceptTask(taskId, workerWallet) {
   const { data, error } = await supabase
     .from("tasks")
     .update({ worker_wallet: workerWallet, status: "accepted" })
     .eq("id", taskId)
-    .eq("status", "open")       // important: ensure it's still open
+    .eq("status", "open")
+    .neq("poster_wallet", workerWallet) // 🚫 poster ≠ worker
     .select()
-    .maybeSingle();             // don’t throw “multiple/none” automatically
+    .maybeSingle();
 
   if (error) throw error;
   if (!data) {
-    // Either: not found, already accepted, completed, or blocked by RLS.
     throw new Error(
-      "Task could not be accepted. It may already be taken or your session lacks permission."
+      "Task could not be accepted. It may already be taken, you're the poster, or your session lacks permission."
     );
   }
   return data;
 }
 
-/** Worker submits work from ACCEPTED → SUBMITTED, for the assigned worker only. */
-export async function submitWork(taskId, workerWallet) {
+/** Worker submits work with details: ACCEPTED -> SUBMITTED */
+export async function submitWork(taskId, workerWallet, { url, notes, fileUrl } = {}) {
+  const patch = {
+    status: "submitted",
+    submission_url: url ?? null,
+    submission_notes: notes ?? null,
+    submission_file_url: fileUrl ?? null,
+    submitted_at: new Date().toISOString(),
+  };
+
   const { data, error } = await supabase
     .from("tasks")
-    .update({ status: "submitted" })
+    .update(patch)
     .eq("id", taskId)
     .eq("status", "accepted")
     .eq("worker_wallet", workerWallet)
@@ -80,37 +96,60 @@ export async function submitWork(taskId, workerWallet) {
     .maybeSingle();
 
   if (error) throw error;
-  if (!data) {
-    throw new Error(
-      "Submit failed. Only the assigned worker can submit while status is 'accepted'."
-    );
-  }
+  if (!data) throw new Error(
+    "Submit failed. Only the assigned worker can submit while status is 'accepted'."
+  );
   return data;
 }
 
-/** Optional helpers when you wire poster review + payout */
-export async function markCompleted(taskId) {
+/** Poster approves: SUBMITTED -> COMPLETED */
+export async function approveTask(taskId, reviewNotes) {
   const { data, error } = await supabase
     .from("tasks")
-    .update({ status: "completed" })
+    .update({
+      status: "completed",
+      review_notes: reviewNotes ?? null,
+      approved_at: new Date().toISOString(),
+    })
     .eq("id", taskId)
+    .eq("status", "submitted")
     .select()
     .maybeSingle();
 
   if (error) throw error;
-  if (!data) throw new Error("Could not mark completed.");
+  if (!data) throw new Error("Could not approve (task not in 'submitted').");
   return data;
 }
 
-export async function markPaid(taskId) {
+/** Poster requests changes: SUBMITTED -> ACCEPTED */
+export async function requestChanges(taskId, reviewNotes) {
   const { data, error } = await supabase
     .from("tasks")
-    .update({ status: "paid" })
+    .update({
+      status: "accepted",
+      review_notes: reviewNotes ?? null,
+    })
     .eq("id", taskId)
+    .eq("status", "submitted")
     .select()
     .maybeSingle();
 
   if (error) throw error;
-  if (!data) throw new Error("Could not mark paid.");
+  if (!data) throw new Error("Could not request changes (task not in 'submitted').");
+  return data;
+}
+
+/** After on-chain release succeeds: COMPLETED -> PAID */
+export async function markPaid(taskId, payoutTxHash) {
+  const { data, error } = await supabase
+    .from("tasks")
+    .update({ status: "paid", payout_tx_hash: payoutTxHash ?? null })
+    .eq("id", taskId)
+    .eq("status", "completed")
+    .select()
+    .maybeSingle();
+
+  if (error) throw error;
+  if (!data) throw new Error("Could not mark as paid (task not in 'completed').");
   return data;
 }

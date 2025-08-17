@@ -4,6 +4,39 @@ import LightRays from "../components/Backgrounds/LightRays";
 import SearchGlow from "../components/ui/SearchGlow";
 import GlassCard from "../components/ui/GlassCard";
 import NeonButton from "../components/ui/NeonButton";
+import { ThreeDMarquee } from "../components/ui/3d-marquee";
+
+const demoImages = [
+  // Adding some more images to make it fuller
+  "/1.png",
+  "/2.png", 
+  "/3.png",
+  "/4.png",
+  "/5.png",
+  "/1.png",
+  "/2.png",
+  "/3.png",
+  "/4.png",
+  "/5.png",
+  "/1.png",
+  "/3.png",
+  "/2.png",
+  "/4.png",
+  "/5.png",
+  "/1.png",
+  "/3.png",
+  "/4.png",
+  "/2.png",
+  "/5.png",
+  "/2.png",
+  "/4.png",
+  "/1.png",
+  "/5.png",
+  "/3.png",
+  "/4.png",
+  "/1.png",
+  "/2.png",
+];
 
 export default function Landing({ onLaunch, onConnect }) {
   return (
@@ -37,8 +70,11 @@ export default function Landing({ onLaunch, onConnect }) {
           </div>
 
           <h1 className="mt-6 text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white">
-            Micro-freelance, <span className="text-white/70">settled</span> on-chain
+            Developers Dojo
           </h1>
+          <h2 className="mt-4 text-2xl sm:text-3xl md:text-4xl font-medium tracking-tight text-white/70">
+            Micro-freelance, <span className="text-white/50">settled</span> on-chain
+          </h2>
           <p className="mx-auto mt-4 max-w-2xl text-base sm:text-lg text-white/70">
             Post tasks, stake rewards, and release funds trustlessly when work is done.
           </p>
@@ -58,6 +94,11 @@ export default function Landing({ onLaunch, onConnect }) {
             >
               How it works
             </a>
+          </div>
+
+          {/* 3D MARQUEE */}
+          <div className="mt-16">
+            <ThreeDMarquee images={demoImages} />
           </div>
         </div>
       </main>

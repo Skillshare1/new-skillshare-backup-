@@ -39,7 +39,7 @@ export default function Navbar({ onPostClick }) {
           pointer-events-auto
           relative mx-auto flex w-[92%] max-w-5xl items-center justify-between
           rounded-2xl border border-white/20
-          bg-white/10 backdrop-blur-xl
+          backdrop-blur-md bg-white/15 ring-1 ring-white/15
           px-4 py-2 sm:px-6
           shadow-[0_10px_40px_-10px_rgba(0,0,0,0.45)]
         "
@@ -47,7 +47,7 @@ export default function Navbar({ onPostClick }) {
         {/* Brand */}
         <div className="flex items-center gap-3">
           <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-violet-500/90 ring-8 ring-violet-500/10" />
-        <span className="text-sm font-semibold tracking-wide text-white/90">SkillSnap</span>
+        <span className="text-sm font-semibold tracking-wide text-white/90">Developers Dojo</span>
         </div>
 
         {/* Actions */}

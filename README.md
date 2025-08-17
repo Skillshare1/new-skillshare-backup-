@@ -1,4 +1,4 @@
-# 🚀 SkillSnap - Decentralized Task Marketplace
+# 🚀 DEvelopers Dojo - Decentralized Task Marketplace
 
 **SkillSnap** is a blockchain-powered platform where users can post tasks and get them completed by skilled individuals in their local area. Think of it as a decentralized TaskRabbit with crypto payments, location-based matching, and smart contract automation.
 

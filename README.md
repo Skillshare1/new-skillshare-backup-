@@ -1,8 +1,14 @@
 # 🚀 DEvelopers Dojo - Decentralized Task Marketplace
 
-**SkillSnap** is a blockchain-powered platform where users can post tasks and get them completed by skilled individuals in their local area. Think of it as a decentralized TaskRabbit with crypto payments, location-based matching, and smart contract automation.
+**DEvelopers Dojo** is a blockchain-powered platform where users can post tasks and get them completed by skilled individuals in their local area. Think of it as a decentralized TaskRabbit with crypto payments, location-based matching, and smart contract automation.
+
+<img width="217" height="42" alt="flow" src="https://github.com/user-attachments/assets/9a842e1e-5fc2-493b-9a23-3516eda68cf6" />
+**Developed only on Flow -> mainnet address [0x41E658e3f4672F3F8215662Fc99B9F6909E8a201] thanks Jz for tokens**
+
 
 ## 🌟 Features
+
+<img width="1709" height="1025" alt="Screenshot 2025-08-17 at 12 03 00 PM" src="https://github.com/user-attachments/assets/02e67dff-867b-4351-8885-e29c1932514d" />
 
 - **🔗 Blockchain Integration**: Smart contracts on Ethereum for secure, trustless transactions
 - **🗺️ Location-Based Matching**: Interactive maps to find tasks near you
